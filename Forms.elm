@@ -47,7 +47,11 @@ update msg model =
       { model | passwordConfirmation = password }
 
     Age age ->
-      { model | age = String.toInt age |> Result.withDefault 0 }
+      case String.toInt age of
+        Err _ ->
+          model
+        Ok age ->
+          { model | age = age }
 
 
 -- VIEW
