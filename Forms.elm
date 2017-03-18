@@ -18,11 +18,12 @@ type alias Model =
   { name : String
   , password : String
   , passwordConfirmation : String
+  , age : Int
   }
 
 model : Model
 model =
-  Model "" "" ""
+  Model "" "" "" 0
 
 
 -- UPDATE
@@ -31,6 +32,7 @@ type Msg
   = Name String
   | Password String
   | PasswordConfirmation String
+  | Age String
 
 update : Msg -> Model -> Model
 update msg model =
@@ -44,6 +46,9 @@ update msg model =
     PasswordConfirmation password ->
       { model | passwordConfirmation = password }
 
+    Age age ->
+      { model | age = String.toInt age |> Result.withDefault 0 }
+
 
 -- VIEW
 
@@ -53,6 +58,8 @@ view model =
     [ viewInput "text" "Name" Name
     , viewInput "text" "Password" Password
     , viewInput "text" "Password confirmation" PasswordConfirmation
+    -- FYI: Input type "number" restricts characters to contain numbers only!
+    , viewInput "number" "Age" Age
     , viewValidation model
     ]
 
