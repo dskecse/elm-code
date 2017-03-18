@@ -64,7 +64,10 @@ viewValidation model =
   let
     (color, message) =
       if model.password == model.passwordConfirmation then
-        ("green", "OK")
+        if (String.length model.password) < 9 then
+          ("red", "Password should be at least 9 characters long!")
+        else
+          ("green", "OK")
       else
         ("red", "Passwords do not match!")
   in
