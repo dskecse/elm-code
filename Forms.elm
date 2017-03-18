@@ -1,6 +1,6 @@
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onInput, onClick)
 import Char
 
 
@@ -19,11 +19,12 @@ type alias Model =
   , password : String
   , passwordConfirmation : String
   , age : Maybe Int
+  , validate : Bool
   }
 
 model : Model
 model =
-  Model "" "" "" Nothing
+  Model "" "" "" Nothing False
 
 
 -- UPDATE
@@ -33,6 +34,7 @@ type Msg
   | Password String
   | PasswordConfirmation String
   | Age String
+  | Validate
 
 update : Msg -> Model -> Model
 update msg model =
@@ -49,6 +51,9 @@ update msg model =
     Age age ->
       { model | age = inputStringToInt age }
 
+    Validate ->
+      { model | validate = True }
+
 
 -- VIEW
 
@@ -61,6 +66,7 @@ view model =
     -- FYI: Input type "number" restricts characters to contain numbers only!
     , viewInput "number" "Age" Age
     , viewValidation model
+    , button [ onClick Validate ] [ text "Submit" ]
     ]
 
 viewInput : String -> String -> (String -> Msg) -> Html Msg
@@ -71,18 +77,21 @@ viewValidation : Model -> Html msg
 viewValidation model =
   let
     (color, message) =
-      if model.password /= model.passwordConfirmation then
-        ("red", "Passwords do not match!")
-      else if (String.length model.password) < 9 then
-        ("red", "Password should be at least 9 characters long!")
-      else if not (String.any Char.isUpper model.password) then
-        ("red", "Password should contain an uppercase character!")
-      else if not (String.any Char.isLower model.password) then
-        ("red", "Password should contain a lowercase character!")
-      else if not (String.any Char.isDigit model.password) then
-        ("red", "Password should contain a numeric character!")
+      if model.validate then
+        if model.password /= model.passwordConfirmation then
+          ("red", "Passwords do not match!")
+        else if (String.length model.password) < 9 then
+          ("red", "Password should be at least 9 characters long!")
+        else if not (String.any Char.isUpper model.password) then
+          ("red", "Password should contain an uppercase character!")
+        else if not (String.any Char.isLower model.password) then
+          ("red", "Password should contain a lowercase character!")
+        else if not (String.any Char.isDigit model.password) then
+          ("red", "Password should contain a numeric character!")
+        else
+          ("green", "OK")
       else
-        ("green", "OK")
+        ("white", "")
   in
     div [ style [("color", color)] ] [ text message ]
 
