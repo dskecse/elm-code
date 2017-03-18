@@ -47,11 +47,7 @@ update msg model =
       { model | passwordConfirmation = password }
 
     Age age ->
-      case String.toInt age of
-        Err _ ->
-          model
-        Ok age ->
-          { model | age = age }
+      { model | age = inputStringToInt age }
 
 
 -- VIEW
@@ -89,3 +85,15 @@ viewValidation model =
         ("green", "OK")
   in
     div [ style [("color", color)] ] [ text message ]
+
+
+-- CUSTOM FUNCTIONS
+
+inputStringToInt : String -> Int
+inputStringToInt input =
+  case String.toInt input of
+    Err _ ->
+      0
+
+    Ok converted ->
+      converted
