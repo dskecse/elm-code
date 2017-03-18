@@ -18,12 +18,12 @@ type alias Model =
   { name : String
   , password : String
   , passwordConfirmation : String
-  , age : Int
+  , age : Maybe Int
   }
 
 model : Model
 model =
-  Model "" "" "" 0
+  Model "" "" "" Nothing
 
 
 -- UPDATE
@@ -89,11 +89,11 @@ viewValidation model =
 
 -- CUSTOM FUNCTIONS
 
-inputStringToInt : String -> Int
+inputStringToInt : String -> Maybe Int
 inputStringToInt input =
   case String.toInt input of
     Err _ ->
-      0
+      Nothing
 
     Ok converted ->
-      converted
+      Just converted
