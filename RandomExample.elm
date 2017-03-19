@@ -16,7 +16,8 @@ main =
 -- MODEL
 
 type alias Model =
-  { dieFace : Int
+  { dieFaceOne : Int
+  , dieFaceTwo : Int
   }
 
 
@@ -24,16 +25,21 @@ type alias Model =
 
 type Msg
   = Roll
-  | NewFace Int
+  | NewFaceOne Int
+  | NewFaceTwo Int
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
-      (model, Random.generate NewFace (Random.int 1 6))
+      (model, Random.generate NewFaceOne (Random.int 1 6))
 
-    NewFace newFace ->
-      (Model newFace, Cmd.none)
+    NewFaceOne newFace ->
+      -- TODO: Get rid of functional disparity and make NewFace branches symmetrical.
+      ({ model | dieFaceOne = newFace }, Random.generate NewFaceTwo (Random.int 1 6))
+
+    NewFaceTwo newFace ->
+      ({ model | dieFaceTwo = newFace }, Cmd.none)
 
 
 -- VIEW
@@ -41,7 +47,8 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ img [ src (dieFaceImage model.dieFace) ] []
+    [ img [ src (dieFaceImage model.dieFaceOne) ] []
+    , img [ src (dieFaceImage model.dieFaceTwo) ] []
     , button [ onClick Roll ] [ text "Roll" ]
     ]
 
@@ -61,4 +68,4 @@ subscriptions model =
 
 init : (Model, Cmd Msg)
 init =
-  (Model 1, Cmd.none)
+  (Model 1 1, Cmd.none)
