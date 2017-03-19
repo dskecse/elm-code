@@ -32,11 +32,13 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
-      (model, Random.generate NewFaceOne (Random.int 1 6))
+      (model, Cmd.batch [
+        Random.generate NewFaceOne getRandomNumericDieFace
+      , Random.generate NewFaceTwo getRandomNumericDieFace
+      ])
 
     NewFaceOne newFace ->
-      -- TODO: Get rid of functional disparity and make NewFace branches symmetrical.
-      ({ model | dieFaceOne = newFace }, Random.generate NewFaceTwo (Random.int 1 6))
+      ({ model | dieFaceOne = newFace }, Cmd.none)
 
     NewFaceTwo newFace ->
       ({ model | dieFaceTwo = newFace }, Cmd.none)
@@ -73,3 +75,10 @@ subscriptions model =
 init : (Model, Cmd Msg)
 init =
   (Model 1 1, Cmd.none)
+
+
+-- CUSTOM
+
+getRandomNumericDieFace : Random.Generator Int
+getRandomNumericDieFace =
+  Random.int 1 6
