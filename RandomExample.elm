@@ -1,4 +1,5 @@
 import Html exposing (..)
+import Html.Attributes exposing (src)
 import Html.Events exposing (onClick)
 import Random
 
@@ -40,9 +41,13 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ h1 [] [ text (toString model.dieFace) ]
+    [ img [ src (dieFaceImage model.dieFace) ] []
     , button [ onClick Roll ] [ text "Roll" ]
     ]
+
+dieFaceImage : Int -> String
+dieFaceImage dieFace =
+  "/images/" ++ (toString dieFace) ++ ".png"
 
 
 -- SUBSCRIPTIONS
