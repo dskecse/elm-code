@@ -47,13 +47,17 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ img [ src (dieFaceImage model.dieFaceOne) ] []
-    , img [ src (dieFaceImage model.dieFaceTwo) ] []
+    [ dieFaceImage model.dieFaceOne
+    , dieFaceImage model.dieFaceTwo
     , button [ onClick Roll ] [ text "Roll" ]
     ]
 
-dieFaceImage : Int -> String
+dieFaceImage : Int -> Html msg
 dieFaceImage dieFace =
+  img [ src (numericDieFaceToImage dieFace) ] []
+
+numericDieFaceToImage : Int -> String
+numericDieFaceToImage dieFace =
   "/images/" ++ (toString dieFace) ++ ".png"
 
 
