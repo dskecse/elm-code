@@ -1,6 +1,6 @@
 import Html exposing (..)
-import Html.Attributes exposing (src, style)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (src, style, for, id, type_, value)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as Decode
 
@@ -28,6 +28,7 @@ type alias Model =
 type Msg
   = MorePlease
   | NewGif (Result Http.Error String)
+  | NewTopic String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -41,13 +42,19 @@ update msg model =
     NewGif (Err error) ->
       ({ model | error = Just error }, Cmd.none)
 
+    NewTopic newTopic ->
+      ({ model | topic = newTopic }, Cmd.none)
+
 
 -- VIEW
 
 view : Model -> Html Msg
 view model =
   div []
-    [ h2 [] [ text model.topic ]
+    [ div []
+        [ label [ for "topic" ] [ text "Topic: " ]
+        , input [ id "topic", type_ "text", value model.topic, onInput NewTopic ] []
+        ]
     , button [ onClick MorePlease ] [ text "More Please!" ]
     , br [] []
     , img [ src model.gifUrl ] []
