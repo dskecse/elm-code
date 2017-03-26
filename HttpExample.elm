@@ -1,5 +1,5 @@
 import Html exposing (..)
-import Html.Attributes exposing (src)
+import Html.Attributes exposing (src, style)
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Decode
@@ -19,6 +19,7 @@ main =
 type alias Model =
   { topic : String
   , gifUrl : String
+  , error : Maybe Http.Error
   }
 
 
@@ -35,10 +36,10 @@ update msg model =
       (model, getRandomGif model.topic)
 
     NewGif (Ok newUrl) ->
-      ({ model | gifUrl = newUrl }, Cmd.none)
+      ({ model | gifUrl = newUrl, error = Nothing }, Cmd.none)
 
-    NewGif (Err _) ->
-      (model, Cmd.none)
+    NewGif (Err error) ->
+      ({ model | error = Just error }, Cmd.none)
 
 
 -- VIEW
@@ -50,7 +51,18 @@ view model =
     , button [ onClick MorePlease ] [ text "More Please!" ]
     , br [] []
     , img [ src model.gifUrl ] []
+    , errorMessage model
     ]
+
+errorMessage : Model -> Html msg
+errorMessage model =
+  case model.error of
+    Just error ->
+      div [ style [("color", "red")] ]
+        [ text ("An error has occurred: " ++ toString error) ]
+
+    Nothing ->
+      div [] []
 
 
 -- SUBSCRIPTIONS
@@ -64,7 +76,7 @@ subscriptions model =
 
 init : (Model, Cmd Msg)
 init =
-  (Model "cats" "/images/waiting.gif", Cmd.none)
+  (Model "cats" "/images/waiting.gif" Nothing, Cmd.none)
 
 
 -- HTTP
